@@ -165,19 +165,19 @@ instance.prototype.action = function(action) {
 	switch (action.action){
 
 		case 'open':
-			cmd = 'OPEN ' + '\"' + action.options.file + '\"';
+			cmd = 'OPEN ' + '"' + action.options.file + '"';
 			break;
 
 		case 'close':
-			cmd = 'CLOSE ' + '\"' + action.options.file + '\"' ;
+			cmd = 'CLOSE ' + '"' + action.options.file + '"' ;
 			break;
 
 		case 'run':
-			cmd = 'RUN ' + '\"' + action.options.file + '\"';
+			cmd = 'RUN ' + '"' + action.options.file + '"';
 			break;
 
 			case 'stop':
-				cmd = 'STOP ' + '\"' + action.options.file + '\"';
+				cmd = 'STOP ' + '"' + action.options.file + '"';
 				break;
 
 		case 'next':
