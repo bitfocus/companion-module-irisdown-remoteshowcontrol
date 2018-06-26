@@ -1,5 +1,6 @@
 var tcp = require('../../tcp');
 var instance_skel = require('../../instance_skel');
+var ping = require('ping');
 var debug;
 var log;
 
@@ -17,8 +18,9 @@ function instance(system, id, config) {
 instance.prototype.updateConfig = function(config) {
 	var self = this;
 
+	self.lastState = self.STATE_UNKNOWN;
+
 	self.config = config;
-	self.init_tcp();
 };
 
 instance.prototype.init = function() {
@@ -27,12 +29,26 @@ instance.prototype.init = function() {
 	debug = self.debug;
 	log = self.log;
 
-	self.status(1,'Connecting'); // status ok!
+	self.status(self.STATE_UNKNOWN, 'Checking ping response');
 
-	self.init_tcp();
+	self.timer = setInterval(function () {
+		ping.sys.probe(self.config.host, function(isAlive) {
+			if (isAlive) {
+				if (self.lastState != self.STATE_OK) {
+					self.status(self.STATE_OK);
+					self.lastState = self.STATE_OK;
+				}
+			} else {
+				if (self.lastState != self.STATE_WARNING) {
+					self.status(self.STATE_WARNING, 'No ping response');
+					self.lastState = self.STATE_WARNING;
+				}
+			}
+		}, { timeout: 2 });
+	});
 };
 
-instance.prototype.init_tcp = function() {
+instance.prototype.init_tcp = function(cb) {
 	var self = this;
 
 	if (self.socket !== undefined) {
@@ -41,11 +57,7 @@ instance.prototype.init_tcp = function() {
 	}
 
 	if (self.config.host) {
-		self.socket = new tcp(self.config.host, 61001);
-
-		self.socket.on('status_change', function (status, message) {
-			self.status(status, message);
-		});
+		self.socket = new tcp(self.config.host, 61001, { reconnect: false });
 
 		self.socket.on('error', function (err) {
 			debug("Network error", err);
@@ -54,11 +66,23 @@ instance.prototype.init_tcp = function() {
 		});
 
 		self.socket.on('connect', function () {
-			self.status(self.STATE_OK);
+			if (self.lastState != self.STATE_OK) {
+				self.status(self.STATE_OK);
+				self.lastState = self.STATE_OK;
+			}
 			debug("Connected");
+			if (typeof cb == 'function') {
+				cb();
+			}
 		})
 
 		self.socket.on('data', function (data) {});
+
+		self.socket.on('end', function () {
+			debug('Disconnected, ok');
+			self.socket.destroy();
+			delete self.socket;
+		});
 	}
 };
 
@@ -80,6 +104,11 @@ instance.prototype.config_fields = function () {
 // When module gets deleted
 instance.prototype.destroy = function() {
 	var self = this;
+
+	if (self.timer) {
+		clearInterval(self.timer);
+		delete self.timer;
+	}
 
 	if (self.socket !== undefined) {
 		self.socket.destroy();
@@ -140,7 +169,7 @@ instance.prototype.actions = function(system) {
 		},
 
 		'next': { label: 'Next slide' },
-		'prev': { label: 'Previous' },
+		'prev': { label: 'Previous slide' },
 		'go':   {
 			label: 'Goto Slide',
 			options: [
@@ -181,11 +210,11 @@ instance.prototype.action = function(action) {
 				break;
 
 		case 'next':
-			cmd = 'NEXT ';
+			cmd = 'NEXT';
 			break;
 
-		case 'Prev':
-			cmd = 'PREV ';
+		case 'prev':
+			cmd = 'PREV';
 			break;
 
 		case 'go':
@@ -193,7 +222,7 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'setbg':
-			cmd = 'SETBG ';
+			cmd = 'SETBG';
 			break;
 
 	};
@@ -205,22 +234,18 @@ instance.prototype.action = function(action) {
 
 		debug('sending ',cmd,"to",self.config.host);
 
-		if (self.socket !== undefined && self.socket.connected) {
+		self.init_tcp(function () {
 			self.socket.send(cmd + "\r");
-		} else {
-			debug('Socket not connected :(');
-		}
+		});
 
 	}
-
-	// debug('action():', action);
 
 };
 
 instance.module_info = {
 	label: 'PPT Remote Show Control ',
 	id: 'pptrsc',
-	version: '0.0.1'
+	version: '0.0.2'
 };
 
 instance_skel.extendedBy(instance);
