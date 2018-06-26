@@ -34,7 +34,7 @@ instance.prototype.init = function() {
 	self.timer = setInterval(function () {
 		ping.sys.probe(self.config.host, function(isAlive) {
 			if (isAlive) {
-				if (self.lastState != self.STATE_OK) {
+				if (self.lastState !== self.STATE_OK && self.lastState !== self.STATE_ERROR) {
 					self.status(self.STATE_OK);
 					self.lastState = self.STATE_OK;
 				}
@@ -61,7 +61,7 @@ instance.prototype.init_tcp = function(cb) {
 
 		self.socket.on('error', function (err) {
 			debug("Network error", err);
-			self.status(self.STATE_ERROR, err);
+			self.status(self.STATE_ERROR, err.message);
 			self.log('error',"Network error: " + err.message);
 		});
 
