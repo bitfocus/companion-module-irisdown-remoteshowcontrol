@@ -45,7 +45,7 @@ instance.prototype.init = function() {
 				}
 			}
 		}, { timeout: 2 });
-	});
+	}, 5000);
 };
 
 instance.prototype.init_tcp = function(cb) {
