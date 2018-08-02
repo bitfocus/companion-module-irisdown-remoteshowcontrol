@@ -91,7 +91,6 @@ instance.prototype.init_tcp = function(cb) {
 instance.prototype.config_fields = function () {
 	var self = this;
 	return [
-
 		{
 			type: 'text',
 			id: 'info',
@@ -133,46 +132,46 @@ instance.prototype.actions = function(system) {
 		'open': {
 			label: 'Open file',
 			options: [
- 				{
- 					 type: 'textinput',
- 					 label: 'filename',
- 					 id: 'file',
- 					 default: ''
- 				}
- 			]
-		  },
-		'close':{
-			label: 'Close file',
-			options: [
-		 {
-				type: 'textinput',
-				label: 'filename',
-				id: 'file',
-				default: ''
-		 }
-	 ]
-	 },
-		'run':  {
-			label: 'Run file',
-			options: [
-			 {
+				{
 					type: 'textinput',
 					label: 'filename',
 					id: 'file',
 					default: ''
-			 }
+				}
+			]
+		},
+		'close':{
+			label: 'Close file',
+			options: [
+				 {
+					type: 'textinput',
+					label: 'filename',
+					id: 'file',
+					default: ''
+				 }
+			 ]
+		 },
+		'run':  {
+			label: 'Run file',
+			options: [
+				{
+					type: 'textinput',
+					label: 'filename',
+					id: 'file',
+					default: ''
+				}
 		 ]
 		},
 
 		'stop':  {
 			label: 'Stop file',
 			options: [
-			 {
+				{
 					type: 'textinput',
 					label: 'filename',
 					id: 'file',
 					default: ''
-			 }
+				}
 		 ]
 		},
 
@@ -181,14 +180,14 @@ instance.prototype.actions = function(system) {
 		'go':   {
 			label: 'Goto Slide',
 			options: [
-			 {
+				{
 					type: 'textinput',
 					label: 'slide nr',
 					id: 'slide',
 					default: ''
-			 }
+				}
 			]
-		 },
+		},
 		'setbg':{ label: 'Set background' }
 
 	});
@@ -213,9 +212,9 @@ instance.prototype.action = function(action) {
 			cmd = 'RUN ' + '"' + action.options.file + '"';
 			break;
 
-			case 'stop':
-				cmd = 'STOP ' + '"' + action.options.file + '"';
-				break;
+		case 'stop':
+			cmd = 'STOP ' + '"' + action.options.file + '"';
+			break;
 
 		case 'next':
 			cmd = 'NEXT';
@@ -251,7 +250,7 @@ instance.prototype.action = function(action) {
 };
 
 instance.module_info = {
-	label: 'PPT Remote Show Control ',
+	label: 'Irisdown PPT Remote Show Control ',
 	id: 'pptrsc',
 	version: '0.0.2'
 };
