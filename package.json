@@ -1,11 +1,16 @@
 {
   "name": "pptrsc",
   "version": "1.0.0",
+	"api_version": "1.0.0",
+	"keywords": [ "Software" ],
+	"manufacturer": "Irisdown",
+	"product": "Remote Show Control",
+	"shortname": "rsc",
   "description": "Module for Irisdown Remote Show Control a Powerpoint Plugin for Windows",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Per Roine",
+  "author": "Per Røine <per.roine@gmail.com>",
   "license": "ISC"
 }

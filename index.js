@@ -249,11 +249,5 @@ instance.prototype.action = function(action) {
 
 };
 
-instance.module_info = {
-	label: 'Irisdown PPT Remote Show Control ',
-	id: 'pptrsc',
-	version: '0.0.2'
-};
-
 instance_skel.extendedBy(instance);
 exports = module.exports = instance;
