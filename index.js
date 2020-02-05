@@ -152,29 +152,28 @@ instance.prototype.actions = function(system) {
 			 ]
 		 },
 		'run':  {
-			label: 'Run file',
+			label: 'Run (file)',
 			options: [
 				{
 					type: 'textinput',
-					label: 'filename',
+					label: 'filename (optional)',
 					id: 'file',
 					default: ''
 				}
 		 ]
 		},
-
+		'runCurrent': { label: 'Run at selected slide' },
 		'stop':  {
-			label: 'Stop file',
+			label: 'Stop (file)',
 			options: [
 				{
 					type: 'textinput',
-					label: 'filename',
+					label: 'filename (optional)',
 					id: 'file',
 					default: ''
 				}
 		 ]
 		},
-
 		'next': { label: 'Next slide' },
 		'prev': { label: 'Previous slide' },
 		'go':   {
@@ -188,7 +187,18 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
-		'setbg':{ label: 'Set background' }
+		'goSection':   {
+			label: 'Goto Section',
+			options: [
+				{
+					type: 'textinput',
+					label: 'section name',
+					id: 'section',
+					default: ''
+				}
+			]
+		},
+		'setbg':{ label: 'Set background' },
 
 	});
 };
@@ -216,6 +226,10 @@ instance.prototype.action = function(action) {
 			cmd = 'STOP ' + '"' + action.options.file + '"';
 			break;
 
+		case 'runcurrent':
+			cmd = 'RUNCURRENT';
+			break;
+
 		case 'next':
 			cmd = 'NEXT';
 			break;
@@ -226,6 +240,10 @@ instance.prototype.action = function(action) {
 
 		case 'go':
 			cmd = 'GO '+ action.options.slide;
+			break;
+
+		case 'goSection':
+			cmd = 'GO '+ action.options.section;
 			break;
 
 		case 'setbg':

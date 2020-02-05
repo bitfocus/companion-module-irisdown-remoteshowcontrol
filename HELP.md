@@ -15,10 +15,11 @@ We currently support the following actions:
  OPEN| Open a presentation
  CLOSE| Close a presentation
  RUN| Start a slideshow
+ RUNCURRENT| Start from current slide
  STOP| Stop a slideshow
  NEXT| Click forward
  PREV| Click backwards
- GO| Go to numbered slide
+ GO| Go to numbered slide or section name
  SETBG| Set Desktop wallpaper background to current slide
 
  for additional actions please raise a feature request at [github](https://github.com/bitfocus/companion)
