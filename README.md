@@ -1,2 +1,2 @@
-# companion-module-pptrsc
+# companion-module-irisdown-remoteshowcontrol
 See HELP.md and LICENSE
