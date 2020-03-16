@@ -226,7 +226,7 @@ instance.prototype.action = function(action) {
 			cmd = 'STOP ' + '"' + action.options.file + '"';
 			break;
 
-		case 'runcurrent':
+		case 'runCurrent':
 			cmd = 'RUNCURRENT';
 			break;
 
