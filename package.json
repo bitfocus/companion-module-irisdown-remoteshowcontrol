@@ -3,9 +3,11 @@
 	"legacy": [
 		"pptrsc"
 	],
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"api_version": "1.0.0",
-	"keywords": [ "Software" ],
+	"keywords": [
+		"Software"
+	],
 	"manufacturer": "Irisdown",
 	"product": "Remote Show Control",
 	"shortname": "rsc",
