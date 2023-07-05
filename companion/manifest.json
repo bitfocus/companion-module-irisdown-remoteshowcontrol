@@ -3,7 +3,7 @@
 	"name": "irisdown-remoteshowcontrol",
 	"shortname": "rsc",
 	"description": "Module for Irisdown Remote Show Control a Powerpoint Plugin for Windows",
-	"version": "0.0.0",
+	"version": "2.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-irisdown-remoteshowcontrol.git",
 	"bugs": "https://github.com/bitfocus/companion-module-irisdown-remoteshowcontrol/issues",
