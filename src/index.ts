@@ -61,14 +61,8 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 			this.socket.destroy()
 		}
 
-		this.updateStatus(InstanceStatus.Connecting)
-
 		if (this.config.host) {
 			this.socket = new TCPHelper(this.config.host, 61001, { reconnect: false })
-
-			this.socket.on('status_change', (status, message) => {
-				this.updateStatus(status, message)
-			})
 
 			this.socket.on('error', (err) => {
 				this.updateStatus(InstanceStatus.ConnectionFailure, err.message)
@@ -76,11 +70,6 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 			})
 
 			this.socket.on('connect', () => {
-				if (this.lastState !== InstanceStatus.Ok) {
-					this.updateStatus(InstanceStatus.Ok)
-					this.lastState = InstanceStatus.Ok
-				}
-
 				if (typeof cb == 'function') {
 					cb()
 				}
@@ -113,11 +102,13 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 		this.log('info', 'config changing!')
 		this.config = config
 		this.saveConfig(config)
+		this.updateStatus(InstanceStatus.Connecting)
 		this.updateActions()
 		this.updatefeedbacks()
 		this.updateVariables()
 		this.updatePresets()
 		this.initPing()
+		this.updateStatus(InstanceStatus.Ok)
 		this.log('info', 'config changed!')
 		return Promise.resolve()
 	}
@@ -148,10 +139,12 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 						label: 'filename',
 						id: 'file',
 						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'OPEN ' + '"' + action.options.file + '"'
+				callback: async (action, context) => {
+					let fileName = await context.parseVariablesInString((action.options.file as string).trim())
+					const cmd = 'OPEN ' + '"' + fileName + '"'
 					await this.sendCommand(cmd)
 				},
 			},
@@ -163,10 +156,12 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 						label: 'filename',
 						id: 'file',
 						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'CLOSE ' + '"' + action.options.file + '"'
+				callback: async (action, context) => {
+					let fileName = await context.parseVariablesInString((action.options.file as string).trim())
+					const cmd = 'CLOSE ' + '"' + fileName + '"'
 					await this.sendCommand(cmd)
 				},
 			},
@@ -178,10 +173,12 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 						label: 'filename (optional)',
 						id: 'file',
 						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'RUN ' + '"' + action.options.file + '"'
+				callback: async (action, context) => {
+					let fileName = await context.parseVariablesInString((action.options.file as string).trim())
+					const cmd = 'RUN ' + '"' + fileName + '"'
 					await this.sendCommand(cmd)
 				},
 			},
@@ -201,10 +198,12 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 						label: 'filename (optional)',
 						id: 'file',
 						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'STOP ' + '"' + action.options.file + '"'
+				callback: async (action, context) => {
+					let fileName = await context.parseVariablesInString((action.options.file as string).trim())
+					const cmd = 'STOP ' + '"' + fileName + '"'
 					await this.sendCommand(cmd)
 				},
 			},
@@ -228,16 +227,16 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 				name: 'Goto Slide',
 				options: [
 					{
-						type: 'number',
+						type: 'textinput',
 						label: 'slide nr',
 						id: 'slide',
-						default: 1,
-						min: 1,
-						max: 999,
+						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'GO ' + action.options.slide
+				callback: async (action, context) => {
+					let slideNumber = Number(await context.parseVariablesInString((action.options.slide as string).trim()))
+					const cmd = 'GO ' + slideNumber
 					await this.sendCommand(cmd)
 				},
 			},
@@ -249,10 +248,19 @@ class RemoteShow extends InstanceBase<RemoteShowConfig> {
 						label: 'section name',
 						id: 'section',
 						default: '',
+						useVariables: true,
 					},
 				],
-				callback: async (action) => {
-					const cmd = 'GO ' + action.options.section
+				callback: async (action, context) => {
+					let sectionName = await context.parseVariablesInString((action.options.section as string).trim())
+					if (sectionName.startsWith('"') === false) {
+						sectionName = `"${sectionName}`
+					}
+
+					if (sectionName.endsWith('"') === false) {
+						sectionName += '"'
+					}
+					const cmd = 'GO ' + sectionName
 					await this.sendCommand(cmd)
 				},
 			},
